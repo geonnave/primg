@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>title</title>
+  </head>
+  <body>
+  	<figure>
+  		<canvas id="canvas" width="960" height="600"></canvas>
+  	</figure>
+  </body>
+
+  <script type="text/javascript">
+  	var canvas = document.getElementById("canvas")
+  	var context = canvas.getContext("2d")
+
+  	make_base()
+
+  	function make_base() {
+  		base_image = new Image()
+  		base_image.src = "seagull.jpg"
+  		base_image.onload = function () {
+  			context.drawImage(base_image, 10, 10)
+  		}
+  	}
+  </script>
+</html>
