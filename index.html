@@ -1,27 +1,76 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>title</title>
-  </head>
-  <body>
-  	<figure>
-  		<canvas id="canvas" width="960" height="600"></canvas>
-  	</figure>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>title</title>
+</head>
+<body>
+  <figure>
+    <img id="orig" src="image.png" width="400">
+    <input type="file" onchange="onFileSelected(event)">
+    <button onclick="threshold()">threshold</button>
+    <canvas id="outputCanvas" width="400" height="400"></canvas>
+  </figure>
+</body>
 
-  <script type="text/javascript">
-  	var canvas = document.getElementById("canvas")
-  	var context = canvas.getContext("2d")
+<script type="text/javascript">
+  var img = document.getElementById('orig')
 
-  	make_base()
+  img.addEventListener('load', function () {
+    threshold = function () {
+      var pixels = Filters.getPixels(img)
+      filteredPixels = Filters.threshold(pixels, 128)
 
-  	function make_base() {
-  		base_image = new Image()
-  		base_image.src = "seagull.jpg"
-  		base_image.onload = function () {
-  			context.drawImage(base_image, 10, 10)
-  		}
-  	}
-  </script>
+      var outputCanvas = document.getElementById("outputCanvas")
+      outputCanvas.width = filteredPixels.width
+      outputCanvas.height = filteredPixels.height
+
+      var ctx = outputCanvas.getContext('2d')
+      ctx.putImageData(filteredPixels, 0, 0)
+    }
+  })
+
+  function onFileSelected(event) {
+    var selectedFile = event.target.files[0];
+    var reader = new FileReader();
+
+    img.title = selectedFile.name;
+
+    reader.onload = function(event) {
+      img.src = event.target.result;
+    };
+
+    reader.readAsDataURL(selectedFile);
+  }
+</script>
+
+<script type="text/javascript">
+  Filters = {};
+  Filters.getPixels = function(img) {
+    var c = this.getCanvas(img.width, img.height);
+    var ctx = c.getContext('2d');
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+    return ctx.getImageData(0,0,c.width,c.height);
+  };
+
+  Filters.getCanvas = function(w,h) {
+    var c = document.createElement('canvas');
+    c.width = w;
+    c.height = h;
+    return c;
+  };
+
+  Filters.threshold = function(pixels, threshold) {
+    var d = pixels.data;
+    for (var i=0; i<d.length; i+=4) {
+      var r = d[i];
+      var g = d[i+1];
+      var b = d[i+2];
+      var v = (0.2126*r + 0.7152*g + 0.0722*b >= threshold) ? 255 : 0;
+      d[i] = d[i+1] = d[i+2] = v
+    }
+    return pixels;
+  };
+</script>
+
 </html>
