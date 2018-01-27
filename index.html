@@ -15,13 +15,14 @@
       </div>
       <canvas id="outputCanvas" width="100" height="100"></canvas>
     </div>
-    <div id="result" style="float: left; margin-left: 20px">
+    <div id="result" style="float: left; margin-left: 20px; width: 600px">
       <p id="trying"></p>
-      <div id="binaryPrimeNumberHTML" style="font-family: monospace; line-height: 12px; font-size: 10px"></div>
+      <div id="binaryPrimeNumber" style="font-family: monospace; line-height: 12px; font-size: 10px"></div>
+      <br>
+      <p id="decimalPrimeNumber" style="width: auto; word-wrap: break-word;"></p>
     </div>
     <div style="clear: both;"></div>
     <br>
-    <p id="decimalPrimeNumber"></p>
   </figure>
 </body>
 
@@ -29,28 +30,37 @@
 
 <script type="text/javascript">
   var img = document.getElementById('orig')
+  var tryingText = document.getElementById("trying")
+  var binaryPrimeNumberDiv = document.getElementById("binaryPrimeNumber")
+  var decimalPrimeNumberText = document.getElementById("decimalPrimeNumber")
+
   var canvasSize = 50
   var worker = new Worker("prime_worker.js")
 
   function genPrimeImage() {
-    var filteredPixels = obtainThresholdPixels(img, canvasSize, canvasSize)
+    tryingText.innerHTML = "Will try to find the prime..."
+    binaryPrimeNumberDiv.innerHTML = ""
+    decimalPrimeNumberText.innerHTML = ""
 
     // code for debugging threshold algorithm
     // var filteredPixelsToShow = obtainThresholdPixels(img, img.width, img.height)
     // drawCanvas(filteredPixelsToShow)
 
+    var filteredPixels = obtainThresholdPixels(img, canvasSize, canvasSize)
     var binaryMatrix = pixelsToBinaryMatrix(filteredPixels)
-
-    document.getElementById("trying").innerHTML = "Will try to find the prime image..."
     var numberBigInt = binaryMatrixToBigInt(binaryMatrix)
 
+    findPrime(numberBigInt)
+  }
+
+  function findPrime(numberBigInt) {
     var i = 0
     worker.addEventListener('message', function(e) {
       if (e.data) {
         console.log("Is prime")
         console.log("Found on iteration " + i)
-        document.getElementById("trying").innerHTML = "Prime image found on iteration " + i
-        document.getElementById("decimalPrimeNumber").innerHTML = "The prime decimal is " + numberString
+        tryingText.innerHTML = "(probably) Prime found on iteration " + i
+        decimalPrimeNumberText.innerHTML = "Decimal: <br><br>" + numberString
         return e.data
       } else {
         console.log("Not prime")
@@ -60,20 +70,15 @@
 
         console.log("Trying #" + i + " with number " + numberString)
 
-        // FIXME: these updates are not shown in the DOM while the CPU does not finish computing the primes
-        document.getElementById("trying").innerHTML = "Trying #" + i
-        document.getElementById("binaryPrimeNumberHTML").innerHTML = binaryPrimeNumberHTML
+        tryingText.innerHTML = "Trying #" + i
+        binaryPrimeNumberDiv.innerHTML = binaryPrimeNumberHTML
+        decimalPrimeNumberText.innerHTML = ""
 
         i++;
         numberBigInt = numberBigInt.minus(1)
         worker.postMessage(numberBigInt.toString())
       }
     }, false)
-
-    worker.postMessage(numberBigInt.toString())
-  }
-
-  function findPrime(numberBigInt, i) {
 
     worker.postMessage(numberBigInt.toString())
   }
@@ -108,13 +113,26 @@
 
   function pixelsToBinaryMatrix(filteredPixels) {
     var binaryMatrix = [[]], data = filteredPixels.data, i = 0, j = 0
+    var white, black;
+
+    // this is needed to guarantee that the most signifcant bit is
+    // aways a 1. if it is a 0, it would be discarded when converting
+    // to BigInteger.
+    if (filteredPixels.data[0] == 0) {
+      white = 1
+      black = 0
+    } else {
+      white = 0
+      black = 1
+    }
+
     for (var k = 0; k < data.length; k += 4) {
         if (j >= filteredPixels.width) {
           i++
           j = 0
           binaryMatrix.push([])
         }
-        binaryMatrix[i].push(filteredPixels.data[k] == 0 ? 1 : 0)
+        binaryMatrix[i].push(filteredPixels.data[k] == 0 ? white : black)
         j++
     }
     return binaryMatrix
@@ -147,8 +165,6 @@
   // thanks https://www.html5rocks.com/en/tutorials/canvas/imagefilters/ for these filters
   Filters = {};
   Filters.getPixels = function(img, width, height) {
-    console.log(width)
-    console.log(height)
     var c = this.getCanvas(width, height);
     var ctx = c.getContext('2d');
     ctx.drawImage(img, 0, 0, width, height);
