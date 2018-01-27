@@ -12,8 +12,8 @@ Access it here https://geonnave.github.io/primg/.
 
 # ToDo
 
-- make it faster (currently takes minutes)
-- use a more clever way (maybe histograms stuff) to find the threshold number
-- find a way to update the DOM while doing heavy processing
-- make it prettier
-- make code cleaner
+- [x] find a way to update the DOM while doing heavy processing
+- [ ] use a more clever way (maybe histograms stuff) to find the threshold number
+- [ ] make it faster (currently takes minutes)
+- [ ] make it prettier
+- [ ] make code cleaner
