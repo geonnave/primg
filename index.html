@@ -14,17 +14,66 @@
   </figure>
 </body>
 
+<script src="http://peterolson.github.com/BigInteger.js/BigInteger.min.js"></script>
+
 <script type="text/javascript">
   var img = document.getElementById('orig')
+  var canvasSize = 50
 
   function genPrimeImage() {
     var filteredPixels = obtainThresholdPixels(img)
     var binaryMatrix = pixelsToBinaryMatrix(filteredPixels)
 
-    var binaryMatrixText = binaryMatrixToText(binaryMatrix)
-    document.getElementById("binaryMatrixText").innerHTML = binaryMatrixText
+    var result = findPrime(binaryMatrix)
+
+    // var binaryMatrixText = binaryMatrixToText(result.binaryMatrix)
+    document.getElementById("binaryMatrixText").innerHTML = result.binaryMatrixText
 
     drawCanvas(filteredPixels)
+  }
+
+  function findPrime(binaryMatrix) {
+    var binaryMatrixNumber = binaryMatrixToNumber(binaryMatrix)
+    var i = 0
+
+    while (!binaryMatrixNumber.isProbablePrime()) {
+      console.log("Trying... " + i)
+      binaryMatrixNumber = binaryMatrixNumber.minus(1)
+      i++
+    }
+    console.log("Found on iteration " + i)
+
+    numberString = binaryMatrixNumber.toString(10)
+    binaryNumberString = binaryMatrixNumber.toString(2)
+
+    binaryMatrixText = ""
+    for (var i = 0; i < binaryNumberString.length; i++) {
+      binaryMatrixText += " " + binaryNumberString[i]
+      if (((i + 1) % canvasSize) == 0) {
+        binaryMatrixText += "<br>"
+      }
+    }
+    console.log(numberString)
+
+    return {numberString: numberString, binaryMatrixText: binaryMatrixText}
+  }
+
+  function changedBinaryMatrix(binaryMatrix) {
+    var randomI = Math.floor(Math.random() * canvasSize)
+    var randomJ = Math.floor(Math.random() * canvasSize)
+
+    binaryMatrix[randomI][randomJ] = binaryMatrix[randomI][randomJ] == "0" ? "1" : "0"
+    return binaryMatrix
+  }
+
+  function binaryMatrixToNumber(binaryMatrix) {
+    var binaryMatrixText = ""
+    for (var i = 0; i < binaryMatrix.length; i++) {
+      for (var j = 0; j < binaryMatrix[i].length; j++) {
+        binaryMatrixText += binaryMatrix[i][j]
+      }
+    }
+    return bigInt(binaryMatrixText, 2)
   }
 
   function obtainThresholdPixels(img) {
@@ -86,9 +135,9 @@
   // thanks https://www.html5rocks.com/en/tutorials/canvas/imagefilters/ for these filters
   Filters = {};
   Filters.getPixels = function(img) {
-    var c = this.getCanvas(50, 50);
+    var c = this.getCanvas(canvasSize, canvasSize);
     var ctx = c.getContext('2d');
-    ctx.drawImage(img, 0, 0, 50, 50);
+    ctx.drawImage(img, 0, 0, canvasSize, canvasSize);
     return ctx.getImageData(0, 0, c.width, c.height);
   };
 
