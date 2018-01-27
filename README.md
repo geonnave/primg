@@ -13,7 +13,7 @@ Access it here https://geonnave.github.io/primg/.
 # ToDo
 
 - [x] find a way to update the DOM while doing heavy processing
-- [ ] use a more clever way (maybe histograms stuff) to find the threshold number
+- [x] use a more clever way (maybe histograms stuff) to find the threshold number (now using average of image)
 - [ ] make it faster (currently takes minutes)
 - [ ] make it prettier
 - [ ] make code cleaner

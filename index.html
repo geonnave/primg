@@ -43,8 +43,8 @@
     decimalPrimeNumberText.innerHTML = ""
 
     // code for debugging threshold algorithm
-    // var filteredPixelsToShow = obtainThresholdPixels(img, img.width, img.height)
-    // drawCanvas(filteredPixelsToShow)
+    var filteredPixelsToShow = obtainThresholdPixels(img, img.width, img.height)
+    drawCanvas(filteredPixelsToShow)
 
     var filteredPixels = obtainThresholdPixels(img, canvasSize, canvasSize)
     var binaryMatrix = pixelsToBinaryMatrix(filteredPixels)
@@ -106,8 +106,9 @@
 
   function obtainThresholdPixels(img, width, height) {
     var pixels = Filters.getPixels(img, width, height)
-    filteredPixels = Filters.grayscale(pixels)
-    filteredPixels = Filters.threshold(pixels, 128)
+    var filteredPixels = Filters.grayscale(pixels)
+    var avg = Filters.average(filteredPixels)
+    filteredPixels = Filters.threshold(pixels, avg)
     return filteredPixels
   }
 
@@ -202,6 +203,15 @@
     }
     return pixels;
   };
+
+  Filters.average = function(pixels) {
+    var acc = 0;
+    var d = pixels.data
+    for (var i = 0; i < d.length; i++) {
+      acc += d[i]
+    }
+    return Math.round(acc / d.length)
+  }
 </script>
 
 </html>
