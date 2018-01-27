@@ -10,7 +10,11 @@
     <input type="file" onchange="onFileSelected(event)">
     <button onclick="genPrimeImage()">genPrimeImage</button>
     <canvas id="outputCanvas" width="50" height="50"></canvas>
-    <div id="binaryMatrixText" style="font-family: monospace; line-height: 12px; font-size: 10px"></div>
+    <div id="result">
+      <p id="trying"></p>
+      <p id="decimalPrimeNumber"></p>
+      <div id="binaryPrimeNumberHTML" style="font-family: monospace; line-height: 12px; font-size: 10px"></div>
+    </div>
   </figure>
 </body>
 
@@ -24,49 +28,49 @@
     var filteredPixels = obtainThresholdPixels(img)
     var binaryMatrix = pixelsToBinaryMatrix(filteredPixels)
 
-    var result = findPrime(binaryMatrix)
-
-    // var binaryMatrixText = binaryMatrixToText(result.binaryMatrix)
-    document.getElementById("binaryMatrixText").innerHTML = result.binaryMatrixText
-
     drawCanvas(filteredPixels)
+
+    document.getElementById("trying").innerHTML = "Trying to find the prime image..."
+    findPrime(binaryMatrix)
+    document.getElementById("trying").innerHTML = "Prime image found!"
   }
 
   function findPrime(binaryMatrix) {
-    var binaryMatrixNumber = binaryMatrixToNumber(binaryMatrix)
+    var numberBigInt = binaryMatrixToBigInt(binaryMatrix)
     var i = 0
 
-    while (!binaryMatrixNumber.isProbablePrime()) {
-      console.log("Trying... " + i)
-      binaryMatrixNumber = binaryMatrixNumber.minus(1)
+    while (true) {
+      numberString = numberBigInt.toString(10)
+      binaryPrimeNumberHTML = binaryNumberStringToHTML(numberBigInt.toString(2))
+
+      console.log("Trying #" + i + " with number " + numberString)
+
+      // FIXME: these updates are not shown in the DOM while the CPU does not finish computing the primes
+      document.getElementById("trying").innerHTML = "Trying #" + i + " with number " + numberString
+      document.getElementById("decimalPrimeNumber").innerHTML = "The prime decimal is " + numberString
+      document.getElementById("binaryPrimeNumberHTML").innerHTML = binaryPrimeNumberHTML
+
+      if (numberBigInt.isProbablePrime())
+        break
+
+      numberBigInt = numberBigInt.minus(1)
       i++
     }
     console.log("Found on iteration " + i)
+  }
 
-    numberString = binaryMatrixNumber.toString(10)
-    binaryNumberString = binaryMatrixNumber.toString(2)
-
-    binaryMatrixText = ""
+  function binaryNumberStringToHTML(binaryNumberString) {
+    binaryPrimeNumberHTML = ""
     for (var i = 0; i < binaryNumberString.length; i++) {
-      binaryMatrixText += " " + binaryNumberString[i]
+      binaryPrimeNumberHTML += " " + binaryNumberString[i]
       if (((i + 1) % canvasSize) == 0) {
-        binaryMatrixText += "<br>"
+        binaryPrimeNumberHTML += "<br>"
       }
     }
-    console.log(numberString)
-
-    return {numberString: numberString, binaryMatrixText: binaryMatrixText}
+    return binaryPrimeNumberHTML
   }
 
-  function changedBinaryMatrix(binaryMatrix) {
-    var randomI = Math.floor(Math.random() * canvasSize)
-    var randomJ = Math.floor(Math.random() * canvasSize)
-
-    binaryMatrix[randomI][randomJ] = binaryMatrix[randomI][randomJ] == "0" ? "1" : "0"
-    return binaryMatrix
-  }
-
-  function binaryMatrixToNumber(binaryMatrix) {
+  function binaryMatrixToBigInt(binaryMatrix) {
     var binaryMatrixText = ""
     for (var i = 0; i < binaryMatrix.length; i++) {
       for (var j = 0; j < binaryMatrix[i].length; j++) {
@@ -95,17 +99,6 @@
         j++
     }
     return binaryMatrix
-  }
-
-  function binaryMatrixToText(binaryMatrix) {
-    var binaryMatrixText = ""
-    for (var i = 0; i < binaryMatrix.length; i++) {
-      for (var j = 0; j < binaryMatrix[i].length; j++) {
-        binaryMatrixText += " " + binaryMatrix[i][j]
-      }
-      binaryMatrixText += "<br>"
-    }
-    return binaryMatrixText
   }
 
   function drawCanvas(filteredPixels) {
