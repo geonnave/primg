@@ -6,29 +6,67 @@
 </head>
 <body>
   <figure>
-    <img id="orig" src="image.png" width="400">
+    <img id="orig" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA8AAAAMcAQMAAACl5F6MAAAABlBMVEW8vsDn6OnyCdevAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEbUlEQVR4AezBMQEAAADCoPVP7WsIoAcAAAAAAAAAAAAAAAAAAAAAAIydO0iOk4eCAGyVXNEuukF0FB1NHE1H0RG0ZEHRf5A99WYMk1T+Kvolw+vVjBf+CkMLoRCFWQkuqCquB3QOOQKrCpwBKJ1i6Jxk/EzTubaArgAHQOeyjhu8aMEafUrYolLjLRMfLrpw5cMYadeBnTLcrwN7ZXi+DhyuCi8GG/xy8Gyw3SRe7n7cLzfnajah5z87keFJ//lYf0WAAq+vv+rDX+fir+zpr2Xqr95qrle/ywr9OxX+/nF19fGRmR/yrzCJCudRqNHiNDHhIlquTBgCF2aX3V2BwYT9nUYdNoNojnqjiKJ56q0xiRaok4EsWqQO2EW0RJ3wQbTMvDc6iFaYswEvkx5Hnf8E0Tx1xhcfj3gh1lhOLHVWnx8vLvBq/FAnYpGBhwEElVfjhyETjVjj5bFanATpLrHIcpDkIstpJRdZLmRykaW63CLLMZKLLGeVXGS5jvlFluZKq8k1lnGMXGMZuck1lnsVu8ZydybXWOYj5BrLDIxcY5lz8mrML/JupPIC02osf3tyjeVqY9dYikys8QlTAUIsFovFYrFYLJaIP8hq8D4GG2ywwQYbbLDBBhtssMEGG2ywwQYb3N9+G/ePwQYbbLDBBhtssMEGG5yhA3ugqcARmFXgDKwqcAGgAsu+J1zYy94UXDjIRxosH+crwUm2euHCWX43Fy7YciUYI9N1YIeRavDpsMdIM9jgs+BOh4PBavA3ras6aMFRC06TEpyrLsy/H5emBKOrwvxZpsOsA3ssOk8SQQ9edZ4WI6DzfJwU4Ym/FCE7ofFXfQoJlnUugRsHdl9GTKBzlxRF6vzVW9kngr5eLTB5hT6MUhPgLfdDRhwQCQ79TQXe756tAWcp10XgIuMYF8aWxoedLtz5sB/wzIeDLrzw4QiRqHBSgOvnwLWFCrc7eCLCbnwrXFh2ZMdHKhEOyx3ciHBch8OHE2TtCZ0IZ0wCz1S4jhGTDhc0ecN9IcLja/qEVwIswqwC+/H3zfgMDw7j95cbPBFg+YEKnIaGWyoNzpvmcEujws0rwGX7LnCnwWOgDLhlZsFuaJEP+zFCC7yw4DCAhFtWFhwHl/lwwpeowRMJzlpw+QpXEgwl2O3gxoH9Du4cOOzgmQNHLTjt4OXF4byDVw5csAsHhhLssM/EgD32qQw4aMER+zQtuDPgpAVn7DMz4IJ9FgYMJdgdwSsB9jgKAQ5acDyEJy24ng8nLTgfwu18uBzC/XwYSrA7hmfCeyCHWU6Hw18Gr4R3fY5zOpy04PwEngj/KfYw9WwYSrB7BjfCW4qH6a8Kh2fwTHgF9jDLyXDSgvMzeKW8UX6Uk2Eowe45PL0m7J/D9VQ4aMG/isH/JwYbbLDBBhtssMEGG2ywtz3K/2tvDmQAAAAABvlbn+NbCSQWi8VisVgsFovFYrFYLBYvAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEHVJjR5bJLd8AAAAASUVORK5CYII=" width="400">
     <input type="file" onchange="onFileSelected(event)">
-    <button onclick="threshold()">threshold</button>
-    <canvas id="outputCanvas" width="400" height="400"></canvas>
+    <button onclick="genPrimeImage()">genPrimeImage</button>
+    <canvas id="outputCanvas" width="50" height="50"></canvas>
+    <div id="binaryMatrixText" style="font-family: monospace; line-height: 12px; font-size: 10px"></div>
   </figure>
 </body>
 
 <script type="text/javascript">
   var img = document.getElementById('orig')
 
-  img.addEventListener('load', function () {
-    threshold = function () {
-      var pixels = Filters.getPixels(img)
-      filteredPixels = Filters.threshold(pixels, 128)
+  function genPrimeImage() {
+    var filteredPixels = obtainThresholdPixels(img)
+    var binaryMatrix = pixelsToBinaryMatrix(filteredPixels)
 
-      var outputCanvas = document.getElementById("outputCanvas")
-      outputCanvas.width = filteredPixels.width
-      outputCanvas.height = filteredPixels.height
+    var binaryMatrixText = binaryMatrixToText(binaryMatrix)
+    document.getElementById("binaryMatrixText").innerHTML = binaryMatrixText
 
-      var ctx = outputCanvas.getContext('2d')
-      ctx.putImageData(filteredPixels, 0, 0)
+    drawCanvas(filteredPixels)
+  }
+
+  function obtainThresholdPixels(img) {
+    var pixels = Filters.getPixels(img)
+    filteredPixels = Filters.grayscale(pixels)
+    filteredPixels = Filters.threshold(pixels, 128)
+    return filteredPixels
+  }
+
+  function pixelsToBinaryMatrix(filteredPixels) {
+    var binaryMatrix = [[]], data = filteredPixels.data, i = 0, j = 0
+    for (var k = 0; k < data.length; k += 4) {
+        if (j >= filteredPixels.width) {
+          i++
+          j = 0
+          binaryMatrix.push([])
+        }
+        binaryMatrix[i].push(filteredPixels.data[k] == 0 ? 1 : 0)
+        j++
     }
-  })
+    return binaryMatrix
+  }
+
+  function binaryMatrixToText(binaryMatrix) {
+    var binaryMatrixText = ""
+    for (var i = 0; i < binaryMatrix.length; i++) {
+      for (var j = 0; j < binaryMatrix[i].length; j++) {
+        binaryMatrixText += " " + binaryMatrix[i][j]
+      }
+      binaryMatrixText += "<br>"
+    }
+    return binaryMatrixText
+  }
+
+  function drawCanvas(filteredPixels) {
+    var outputCanvas = document.getElementById("outputCanvas")
+    outputCanvas.width = filteredPixels.width
+    outputCanvas.height = filteredPixels.height
+
+    var ctx = outputCanvas.getContext('2d')
+    ctx.putImageData(filteredPixels, 0, 0)
+  }
 
   function onFileSelected(event) {
     var selectedFile = event.target.files[0];
@@ -45,12 +83,13 @@
 </script>
 
 <script type="text/javascript">
+  // thanks https://www.html5rocks.com/en/tutorials/canvas/imagefilters/ for these filters
   Filters = {};
   Filters.getPixels = function(img) {
-    var c = this.getCanvas(img.width, img.height);
+    var c = this.getCanvas(50, 50);
     var ctx = c.getContext('2d');
-    ctx.drawImage(img, 0, 0, img.width, img.height);
-    return ctx.getImageData(0,0,c.width,c.height);
+    ctx.drawImage(img, 0, 0, 50, 50);
+    return ctx.getImageData(0, 0, c.width, c.height);
   };
 
   Filters.getCanvas = function(w,h) {
@@ -58,6 +97,19 @@
     c.width = w;
     c.height = h;
     return c;
+  };
+
+  Filters.grayscale = function(pixels, args) {
+    var d = pixels.data;
+    for (var i=0; i<d.length; i+=4) {
+      var r = d[i];
+      var g = d[i+1];
+      var b = d[i+2];
+      // CIE luminance for the RGB
+      var v = 0.2126*r + 0.7152*g + 0.0722*b;
+      d[i] = d[i+1] = d[i+2] = v
+    }
+    return pixels;
   };
 
   Filters.threshold = function(pixels, threshold) {
