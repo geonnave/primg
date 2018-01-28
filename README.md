@@ -8,7 +8,7 @@ Access it here https://geonnave.github.io/primg/.
 
 **Note**
 - It may take MINUTES to find a prime number
-- Due to a naive method for choosing the threshold (fixed at 128), not all images will have good results. Here is an example of one that will look good: [click here](https://i.ytimg.com/vi/mjUvJnjhlhY/maxresdefault.jpg)
+- Due to a naive method for choosing the threshold (fixed at 128), not all images will have good results. Here is an example of one that will look good: [seagull](https://i.ytimg.com/vi/mjUvJnjhlhY/maxresdefault.jpg). In any case, prefer images with clear silhouette.
 
 # ToDo
 
