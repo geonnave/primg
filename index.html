@@ -55,30 +55,35 @@
 
   function findPrime(numberBigInt) {
     var i = 0
+
     worker.addEventListener('message', function(e) {
       if (e.data) {
         console.log("Is prime")
         console.log("Found on iteration " + i)
         tryingText.innerHTML = "(probably) Prime found on iteration " + i
-        decimalPrimeNumberText.innerHTML = "Decimal: <br><br>" + numberString
+        decimalPrimeNumberText.innerHTML = "Decimal: <br><br>" + numberBigInt.toString()
         return e.data
       } else {
         console.log("Not prime")
 
-        numberString = numberBigInt.toString(10)
-        binaryPrimeNumberHTML = binaryNumberStringToHTML(numberBigInt.toString(2))
-
-        console.log("Trying #" + i + " with number " + numberString)
-
-        tryingText.innerHTML = "Trying #" + i
-        binaryPrimeNumberDiv.innerHTML = binaryPrimeNumberHTML
-        decimalPrimeNumberText.innerHTML = ""
-
         i++;
         numberBigInt = numberBigInt.minus(1)
+
+        console.log("Trying #" + i + " with number " + numberBigInt.toString())
+
+        tryingText.innerHTML = "Trying #" + i
+        binaryPrimeNumberDiv.innerHTML = binaryNumberStringToHTML(numberBigInt.toString(2))
+        decimalPrimeNumberText.innerHTML = ""
+
         worker.postMessage(numberBigInt.toString())
       }
     }, false)
+
+    console.log("Trying #" + i + " with number " + numberBigInt.toString())
+
+    tryingText.innerHTML = "Trying #" + i
+    binaryPrimeNumberDiv.innerHTML = binaryNumberStringToHTML(numberBigInt.toString(2))
+    decimalPrimeNumberText.innerHTML = ""
 
     worker.postMessage(numberBigInt.toString())
   }
