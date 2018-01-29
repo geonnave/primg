@@ -6,14 +6,10 @@ Inspired by this: [Does there exist a prime number whose representation on a pho
 
 Access it here https://geonnave.github.io/primg/.
 
-**Note**
-- It may take MINUTES to find a prime number
-- Due to a naive method for choosing the threshold (fixed at 128), not all images will have good results. Here is an example of one that will look good: [seagull](https://i.ytimg.com/vi/mjUvJnjhlhY/maxresdefault.jpg). In any case, prefer images with clear silhouette.
-
 # ToDo
 
-- [x] find a way to update the DOM while doing heavy processing
-- [x] use a more clever way (maybe histograms stuff) to find the threshold number (now using average of image)
-- [ ] make it faster (currently takes minutes)
+- [x] ~~find a way to update the DOM while doing heavy processing~~ solved: Web Workers to the rescue
+- [x] ~~use a more clever way (maybe histograms stuff) to find the threshold number~~ now using average of image
+- [x] ~~make it faster (currently takes minutes)~~ "solved" by reducing canvas size from 50x50 to 32x32
 - [ ] make it prettier
 - [ ] make code cleaner
