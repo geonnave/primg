@@ -34,7 +34,7 @@
   var binaryPrimeNumberDiv = document.getElementById("binaryPrimeNumber")
   var decimalPrimeNumberText = document.getElementById("decimalPrimeNumber")
 
-  var canvasSize = 50
+  var canvasSize = 32
   var worker = new Worker("prime_worker.js")
 
   function genPrimeImage() {
@@ -60,7 +60,7 @@
       if (e.data) {
         console.log("Is prime")
         console.log("Found on iteration " + i)
-        tryingText.innerHTML = "(probably) Prime found on iteration " + i
+        tryingText.innerHTML = "Prime found on iteration " + i
         decimalPrimeNumberText.innerHTML = "Decimal: <br><br>" + numberBigInt.toString()
         return e.data
       } else {
