@@ -133,8 +133,8 @@
     var binaryMatrix = [[]], data = filteredPixels.data, i = 0, j = 0
     var white, black;
 
-    // this is needed to guarantee that the most signifcant bit is
-    // aways a 1. if it is a 0, it would be discarded when converting
+    // this is needed to guarantee that the most significant bit is
+    // always a 1. if it is a 0, it would be discarded when converting
     // to BigInteger.
     if (filteredPixels.data[0] == 0) {
       white = 1
