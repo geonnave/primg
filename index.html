@@ -37,6 +37,18 @@
   var canvasSize = 32
   var worker = new Worker("prime_worker.js")
 
+  window.onload = function(e) {
+    var number
+    if (location.hash) {
+      try {
+        number = bigInt(location.hash.substr(1))
+        binaryPrimeNumberDiv.innerHTML = binaryNumberStringToHTML(number.toString(2))
+      } catch(e) {
+        console.log("the hash string must be a number")
+      }
+    }
+  }
+
   function genPrimeImage() {
     tryingText.innerHTML = "Will try to find the prime..."
     binaryPrimeNumberDiv.innerHTML = ""
@@ -61,7 +73,7 @@
         console.log("Is prime")
         console.log("Found on iteration " + i)
         tryingText.innerHTML = "Prime found on iteration " + i
-        decimalPrimeNumberText.innerHTML = "Decimal: <br><br>" + numberBigInt.toString()
+        decimalPrimeNumberText.innerHTML = "Sharing URL: <br><br>https://geonnave.github.io/primg/#" + numberBigInt.toString()
         return e.data
       } else {
         console.log("Not prime")

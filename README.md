@@ -6,6 +6,8 @@ Inspired by this: [Does there exist a prime number whose representation on a pho
 
 Access it here https://geonnave.github.io/primg/.
 
+**Update**: now you can share URLs by appending the decimal number after the hash on the URL (you loose the image tough). For example, this is a prime dog: https://geonnave.github.io/primg/#179769313486231590772930519078902473361797697894230657273429661642538456588077306078196596037783249291026990862829670919205888565609581869739105202524725614169647793002230079727461396703734603105685474079081886809070115786113168328330817484522518138348888081075292599304124949646601273927687076353436639295493. Thanks for jchavannes and fovc from Hacker News for sharing ideas on this feature.
+
 # ToDo
 
 - [x] ~~find a way to update the DOM while doing heavy processing~~ solved: Web Workers to the rescue
