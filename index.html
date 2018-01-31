@@ -35,7 +35,32 @@
   var decimalPrimeNumberText = document.getElementById("decimalPrimeNumber")
 
   var canvasSize = 32
+  var iteration = 0
+  var numberBigInt = null
   var worker = new Worker("prime_worker.js")
+
+  worker.addEventListener('message', function(e) {
+    if (e.data) {
+      console.log("Is prime")
+      console.log("Found on iteration " + iteration)
+      tryingText.innerHTML = "Prime found on iteration " + iteration
+      decimalPrimeNumberText.innerHTML = "Sharing URL: <br><br>https://geonnave.github.io/primg/#" + numberBigInt.toString()
+      return e.data
+    } else {
+      console.log("Not prime")
+
+      iteration++;
+      numberBigInt = numberBigInt.minus(1)
+
+      console.log("Trying #" + iteration + " with number " + numberBigInt.toString())
+
+      tryingText.innerHTML = "Trying #" + iteration
+      binaryPrimeNumberDiv.innerHTML = binaryNumberStringToHTML(numberBigInt.toString(2))
+      decimalPrimeNumberText.innerHTML = ""
+
+      worker.postMessage(numberBigInt.toString())
+    }
+  }, false)
 
   window.onload = function(e) {
     var number
@@ -55,45 +80,17 @@
     decimalPrimeNumberText.innerHTML = ""
 
     // code for debugging threshold algorithm
-    var filteredPixelsToShow = obtainThresholdPixels(img, img.width, img.height)
-    drawCanvas(filteredPixelsToShow)
+    // var filteredPixelsToShow = obtainThresholdPixels(img, img.width, img.height)
+    // drawCanvas(filteredPixelsToShow)
 
     var filteredPixels = obtainThresholdPixels(img, canvasSize, canvasSize)
     var binaryMatrix = pixelsToBinaryMatrix(filteredPixels)
-    var numberBigInt = binaryMatrixToBigInt(binaryMatrix)
+    numberBigInt = binaryMatrixToBigInt(binaryMatrix)
 
-    findPrime(numberBigInt)
-  }
+    iteration = 0
+    console.log("Trying #" + iteration + " with number " + numberBigInt.toString())
 
-  function findPrime(numberBigInt) {
-    var i = 0
-
-    worker.addEventListener('message', function(e) {
-      if (e.data) {
-        console.log("Is prime")
-        console.log("Found on iteration " + i)
-        tryingText.innerHTML = "Prime found on iteration " + i
-        decimalPrimeNumberText.innerHTML = "Sharing URL: <br><br>https://geonnave.github.io/primg/#" + numberBigInt.toString()
-        return e.data
-      } else {
-        console.log("Not prime")
-
-        i++;
-        numberBigInt = numberBigInt.minus(1)
-
-        console.log("Trying #" + i + " with number " + numberBigInt.toString())
-
-        tryingText.innerHTML = "Trying #" + i
-        binaryPrimeNumberDiv.innerHTML = binaryNumberStringToHTML(numberBigInt.toString(2))
-        decimalPrimeNumberText.innerHTML = ""
-
-        worker.postMessage(numberBigInt.toString())
-      }
-    }, false)
-
-    console.log("Trying #" + i + " with number " + numberBigInt.toString())
-
-    tryingText.innerHTML = "Trying #" + i
+    tryingText.innerHTML = "Trying #" + iteration
     binaryPrimeNumberDiv.innerHTML = binaryNumberStringToHTML(numberBigInt.toString(2))
     decimalPrimeNumberText.innerHTML = ""
 
