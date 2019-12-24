@@ -43,3 +43,7 @@
   justify-content: space-around;
   /*align-items: center;*/
 }
+
+.content .input input {
+  max-width: 200px
+}
