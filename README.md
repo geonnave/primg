@@ -15,5 +15,5 @@ Primg [has made it to Hacker News' front page](https://news.ycombinator.com/item
 - [x] ~~find a way to update the DOM while doing heavy processing~~ solved: Web Workers to the rescue
 - [x] ~~use a more clever way (maybe histograms stuff) to find the threshold number~~ now using average of image
 - [x] ~~make it faster (currently takes minutes)~~ "solved" by reducing canvas size from 50x50 to 32x32
-- [ ] make it prettier
+- [X] make it prettier
 - [ ] make code cleaner
