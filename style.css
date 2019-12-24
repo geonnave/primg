@@ -1,0 +1,49 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.menu-container {
+  color: #fff;
+  background-color: #5995DA;  /* Blue */
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.menu {
+  /*border: 1px solid #fff;*/
+  width: 900px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.title {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+}
+.source {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content-container {
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  /*width: 900px;*/
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+  /*align-items: center;*/
+}
+
+.content .input input {
+  max-width: 200px
+}
