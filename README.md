@@ -8,6 +8,8 @@ Access it here https://geonnave.github.io/primg/.
 
 Primg [has made it to Hacker News' front page](https://news.ycombinator.com/item?id=16260512)! :)
 
+**Note**: intentionally self-contained; vanilla Javascript by design.
+
 **Update**: now you can share URLs by appending the decimal number after the hash on the URL (you lose the image tough). For example, this is a prime dog: https://geonnave.github.io/primg/#179769313486231590772930519078902473361797697894230657273429661642538456588077306078196596037783249291026990862829670919205888565609581869739105202524725614169647793002230079727461396703734603105685474079081886809070115786113168328330817484522518138348888081075292599304124949646601273927687076353436639295493. Thanks for jchavannes and fovc from Hacker News for sharing ideas on this feature.
 
 # ToDo
@@ -16,4 +18,3 @@ Primg [has made it to Hacker News' front page](https://news.ycombinator.com/item
 - [x] ~~use a more clever way (maybe histograms stuff) to find the threshold number~~ now using average of image
 - [x] ~~make it faster (currently takes minutes)~~ "solved" by reducing canvas size from 50x50 to 32x32
 - [X] make it prettier
-- [ ] make code cleaner
